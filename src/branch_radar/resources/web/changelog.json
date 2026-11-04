@@ -1,0 +1,395 @@
+{
+  "releases": [
+    {
+      "version": "0.3.0",
+      "date": "2026-08-25",
+      "current": true,
+      "headline": "从分支工作台，走向清晰的变化雷达",
+      "headline_en": "From a branch workspace to a clear change radar",
+      "summary": "0.3.0 让变化更容易被发现、理解和跟进：最近动态升级为分支信号场，同时补齐安全克隆、中英文界面、低占用定时检查与可持续查看的后台任务反馈。",
+      "summary_en": "Version 0.3.0 makes changes easier to spot, understand, and follow up. Recent activity becomes a branch signal field, joined by safe cloning, a bilingual interface, low-overhead scheduled checks, and persistent background task feedback.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "粘贴 GitHub 仓库地址即可在确认后安全克隆到已配置的扫描目录，并从持久任务面板继续查看进度、取消任务或选择分支。",
+            "完整 Web 界面支持中文与英文即时切换，并会跟随浏览器语言和保留本机偏好。",
+            "每轮检查都会保留结果摘要、新增事件与未观察分支，离开弹窗后仍能继续查看。",
+            "主动监控默认每 15 分钟由 launchd 或 systemd 唤醒一次有界检查，也可选择 5、15、30 或 60 分钟；空闲时没有常驻 Python 进程或额外端口，loopback Web 服务仍可独立常驻。",
+            "系统通知默认关闭；启用后只在一轮检查出现真实变化时发送一条合并提醒，并支持跨午夜的勿扰时段。"
+          ],
+          "items_en": [
+            "Paste a GitHub repository URL to confirm a safe clone into a configured scan directory, then keep following progress, cancel the task, or choose branches from the persistent task panel.",
+            "The complete Web interface switches instantly between Chinese and English, follows the browser language, and retains the local preference.",
+            "Every check retains its result summary, new events, and unobserved branches so progress remains available after leaving a dialog.",
+            "Active monitoring wakes one bounded check through launchd or systemd every 15 minutes by default, with 5, 15, 30, and 60-minute choices. No Python process or extra port remains while idle, and the loopback Web service can stay resident independently.",
+            "System notifications are off by default. When enabled, a check with real changes sends one consolidated alert and respects quiet hours that may cross midnight."
+          ]
+        },
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "最近变化升级为按仓库与分支分轨的时间信号场，可切换 24 小时或 7 天范围，并通过形状、体量与风险标记快速分诊。",
+            "仓库、选中分支和单个分支都可以直接检查；事件摘要会呈现分类、作者、高危信号与变化体量。",
+            "本地项目通过系统文件夹选择器明确管理扫描范围，不再依赖固定目录或换机后失效的路径猜测。",
+            "动态的 24 小时与 7 天范围改由服务端筛选，列表不再出现已加载却无法显示的记录。",
+            "命令行支持中文与英文，跟随 --lang、BRANCH_RADAR_LANG 或系统区域设置；--json 输出保持稳定不随语言变化。",
+            "控制台的错误提示按错误码本地化，英文界面不再退化成笼统的失败提示。",
+            "新增本机 Markdown 发布目标，不依赖飞书、账号或网络也能沉淀分支变化。"
+          ],
+          "items_en": [
+            "Recent activity is now a time-based signal field with one lane per repository branch, 24-hour and 7-day ranges, and shapes, scale, and risk markers for faster triage.",
+            "Checks can target a repository, selected branches, or one branch directly; event summaries surface categories, authors, high-risk signals, and change scale.",
+            "Local projects use the system folder picker to manage scan scope explicitly instead of relying on fixed directories or machine-specific path guesses.",
+            "The 24-hour and 7-day activity ranges are filtered on the server, so the list no longer holds records it has loaded but cannot show.",
+            "The command line speaks Chinese and English, following --lang, BRANCH_RADAR_LANG or the system locale; --json output stays stable regardless of language.",
+            "Console errors are localized by error code, so the English interface no longer falls back to a generic failure message.",
+            "A local Markdown publication target records branch changes without Lark, an account or a network."
+          ]
+        },
+        {
+          "type": "性能",
+          "type_en": "Performance",
+          "items": [
+            "应用发起的克隆保留完整提交历史与远端分支引用，同时延迟下载暂时用不到的旧文件内容。",
+            "不同 Git 对象库的检查采用有界并发，同一对象库仍按顺序处理。",
+            "后台任务的进度在状态真正变化时立即回传，不再按固定间隔轮询。",
+            "控制台接口响应支持压缩传输，大量关注分支下的状态读取明显更轻。",
+            "关注分支列表按需渲染：收起的仓库不再构建分支行，页面刷新不受未展开分支数量影响。",
+            "控制台复用同一条本地连接，不再为每个请求重建连接。",
+            "后台服务按 retention_days（默认 180 天）自动清理过期历史，未完成的投递与待确认批次始终保留；doctor 会显示数据库大小与上次清理时间。",
+            "Git 会先比较所选远端分支 OID 与本机 tracking ref；全部一致时跳过 fetch，只在确有变化时继续定向获取目标分支。"
+          ],
+          "items_en": [
+            "App-created clones retain complete commit history and remote branch refs while deferring old file contents that are not yet needed.",
+            "Checks use bounded concurrency across separate Git object stores while operations sharing one object store remain sequential.",
+            "Background task progress is delivered the moment the state changes instead of on a fixed polling interval.",
+            "Console API replies are compressed, so reading status stays light even with many watched branches.",
+            "The watched-branch list renders on demand: collapsed repositories no longer build their branch rows, so refreshes do not scale with unopened branches.",
+            "The console reuses one local connection instead of rebuilding it for every request.",
+            "The background service prunes expired history on its own according to retention_days (180 by default), always preserving unfinished deliveries and unacknowledged check runs; doctor reports the database size and the last prune.",
+            "Git compares each selected remote branch OID with its local tracking ref first. When every OID matches, it skips fetch; otherwise it continues with a targeted fetch for the selected branches only."
+          ]
+        },
+        {
+          "type": "安全",
+          "type_en": "Security",
+          "items": [
+            "克隆仅可写入已配置的扫描目录，不覆盖已有目标、不保存 Git 凭证，并支持安全取消与临时数据回收。",
+            "继续保持本机回环访问、严格会话校验、纯文本仓库数据与受 operation lock 协调的后台写操作。"
+          ],
+          "items_en": [
+            "Cloning is limited to configured scan directories, never overwrites an existing target or stores Git credentials, and supports safe cancellation with temporary data cleanup.",
+            "Loopback-only access, strict session validation, plain-text repository data, and background writes coordinated by the operation lock remain enforced."
+          ]
+        },
+        {
+          "type": "修复",
+          "type_en": "Fixed",
+          "items": [
+            "顶部栏在收缩临界点保持稳定，更新日志每次进入都会重新校验，同时避免浏览器断开连接产生冗长服务日志。"
+          ],
+          "items_en": [
+            "The top bar remains stable near its collapse threshold, the changelog revalidates on every visit, and browser disconnects no longer generate noisy service tracebacks."
+          ]
+        }
+      ]
+    },
+    {
+      "entry_type": "update",
+      "version": "0.3.0",
+      "date": "2026-08-27",
+      "current": false,
+      "headline": "分支动态成为可探索的演化画布",
+      "headline_en": "Branch activity becomes an explorable evolution canvas",
+      "summary": "分支变化沿横向时间生长为可缩放、可平移的演化画布；作者与修改内容会随缩放层级逐步显露，并可切换到无打扰的纯画布视图。",
+      "summary_en": "Branch changes now grow across a horizontally timed, zoomable and pannable evolution canvas. Authors and change details emerge with semantic zoom, with a distraction-free canvas view when needed.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "分支动态升级为横向时间演化画布；跨分支枝杈只在观测关系可以验证时连接，证据不足则保持独立。",
+            "作者直接出现在变化路径上；展开作者节点即可原位查看提交摘要，以及明确标为事件整体的修改体量。",
+            "侧边栏支持主动收起，专注模式会隐藏外围界面，只保留画布与必要控制。"
+          ],
+          "items_en": [
+            "Branch activity becomes a horizontal-time evolution canvas. Cross-branch paths connect only when observation data verifies the relationship; missing evidence leaves them independent.",
+            "Authors appear directly on the change path; expanding an author node reveals commit summaries and change totals explicitly scoped to the whole event.",
+            "The sidebar can be collapsed on demand, while focus mode hides surrounding interface chrome and keeps only the canvas and essential controls."
+          ]
+        },
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "画布横轴优先采用 Git 提交时间，节点同时保留检查时间；无法取得可靠提交时间时会明确回退并标记，避免把扫描时刻误解为修改时刻。",
+            "语义缩放会在远景、中景和近景间逐步展示仓库轮廓、分支名称、作者段与修改细节，避免一次铺开全部信息。",
+            "画布提供放大、缩小、适应全部、回到现在与小地图定位，也保留键盘和按钮操作作为拖动手势的替代。",
+            "24 小时与 7 天选项明确表示按检查时间筛选发现范围，不暗示所有提交都发生在该时间窗内。",
+            "当前视口、缩放级别与基于已加载记录的范围说明保持可见，历史证据不足时会明确标记而不是推测连接。"
+          ],
+          "items_en": [
+            "The canvas axis now prefers Git commit time while retaining check time on each node. When reliable commit time is unavailable, the fallback is explicitly labeled so check time is never mistaken for change time.",
+            "Semantic zoom progressively reveals repository outlines, branch names, author segments, and change details across overview, middle, and close ranges instead of exposing everything at once.",
+            "The canvas provides zoom in, zoom out, fit all, back to now, and minimap navigation, with keyboard and button controls retained as alternatives to dragging.",
+            "The 24-hour and 7-day options explicitly filter discoveries by check time and do not imply that every plotted commit occurred inside that window.",
+            "The current viewport, zoom level, and loaded-record scope remain visible, and incomplete historical evidence is marked explicitly instead of producing inferred connections."
+          ]
+        }
+      ]
+    },
+    {
+      "entry_type": "update",
+      "version": "0.2.0",
+      "date": "2026-08-25",
+      "current": false,
+      "headline": "用信号场看清最近变化",
+      "headline_en": "See recent changes as a signal field",
+      "summary": "最近变化改为按仓库与分支分轨的时间信号场，可在 24 小时和 7 天范围间切换，并从节点直接读取摘要与完整分析。",
+      "summary_en": "Recent changes now appear in a time-based signal field with one lane per repository branch, a 24-hour or 7-day range, and direct access from each signal to its summary and full analysis.",
+      "changes": [
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "最近变化按仓库与分支分轨呈现；信号节点通过形状、大小和文字区分变化类型、体量与风险，并支持键盘选择和同一检查批次的视觉关联。"
+          ],
+          "items_en": [
+            "Recent changes are arranged into repository-branch lanes; signal nodes use shape, size, and text to distinguish change type, scale, and risk, with keyboard selection and visual links across the same check run."
+          ]
+        }
+      ]
+    },
+    {
+      "entry_type": "update",
+      "version": "0.2.0",
+      "date": "2026-08-24",
+      "current": false,
+      "headline": "GitHub 仓库可安全克隆，界面支持中英文切换",
+      "headline_en": "Safe GitHub cloning and a bilingual interface",
+      "summary": "本次补充更新为未匹配到本地 checkout 的 GitHub 地址加入显式克隆确认、后台任务进度与更轻量的下载方式，并让完整 Web 界面可在中文和英文之间即时切换。",
+      "summary_en": "This update adds explicit cloning, persistent background progress, and a lighter download path for GitHub URLs without a local checkout, plus instant Chinese-English switching across the Web interface.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "粘贴 GitHub 地址且本机没有匹配 checkout 时，会先明确展示仓库、已配置扫描目录和目标目录名，再由用户确认克隆。",
+            "克隆任务离开确认弹窗后会固定显示在页面任务面板中，可查看实际阶段、百分比与用时，也可以安全取消；完成或失败结果会保留到用户继续选择分支、重试或主动关闭。",
+            "Web 界面支持中文与英文即时切换，默认跟随浏览器语言并在本机保存偏好。"
+          ],
+          "items_en": [
+            "When a pasted GitHub URL has no matching local checkout, Branch Radar shows the repository, configured scan directory, and destination folder before asking for confirmation.",
+            "After confirmation, clone jobs move into a persistent page-level task panel with the actual stage, percentage, and elapsed time. Completion or failure remains available until the user chooses branches, retries, or dismisses it.",
+            "The Web interface now switches instantly between Chinese and English, follows the browser language by default, and stores the preference locally."
+          ]
+        },
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "克隆目标目录改为与产品视觉一致的自定义选择器，支持完整键盘操作、长路径、深浅主题和中英文界面。"
+          ],
+          "items_en": [
+            "The clone destination now uses a product-native picker with full keyboard support, long-path handling, light and dark themes, and both interface languages."
+          ]
+        },
+        {
+          "type": "性能",
+          "type_en": "Performance",
+          "items": [
+            "应用发起的克隆会保留完整提交历史与远端分支引用，但延迟下载暂时用不到的旧文件内容；大型多分支仓库的首次下载更快、更省网络流量。"
+          ],
+          "items_en": [
+            "App-created clones retain complete commit history and remote branch refs while deferring old file contents that are not yet needed, reducing initial time and transfer size for large multi-branch repositories."
+          ]
+        },
+        {
+          "type": "安全",
+          "type_en": "Security",
+          "items": [
+            "克隆只能写入已配置的扫描目录，不覆盖已有目标，不保存 Git 凭证；冲突、认证、超时、取消与清理失败会给出明确提示。"
+          ],
+          "items_en": [
+            "Cloning is limited to configured scan directories, never overwrites an existing destination, and never stores Git credentials; conflicts, authentication failures, timeouts, cancellation, and cleanup failures receive explicit guidance."
+          ]
+        }
+      ]
+    },
+    {
+      "entry_type": "update",
+      "version": "0.2.0",
+      "date": "2026-08-21",
+      "current": false,
+      "headline": "检查结果更清晰，日常操作更稳定",
+      "headline_en": "Clearer check results and steadier everyday use",
+      "summary": "这次补充更新完善了仓库检查与检查结果视图，也收敛了事件详情和本地项目管理；8 月 20 日的版本记录保持不变。",
+      "summary_en": "This update improves repository checks and their result view while refining event details and local project management. The August 20 release notes remain unchanged.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "支持从仓库标题行一次检查该仓库当前关注的全部分支。",
+            "每轮检查会沉淀为可展开的结果面，保留新增事件、未观察分支、发布结果与可选的跨事件综述。"
+          ],
+          "items_en": [
+            "Run a check for every watched branch in a repository directly from its header.",
+            "Each check is retained as an expandable result with new events, unobserved branches, publication outcomes, and an optional cross-event overview."
+          ]
+        },
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "事件详情移除低参考价值的 SHA 范围，新增提交改为按提交时间最新优先展示。",
+            "动态列表直接展示分类、作者、高危信号与变化体量，新事件会保持标记直到对应检查轮次被确认。",
+            "本地项目改为通过系统文件夹选择器明确管理扫描范围；不再猜测开发目录或在空配置时扫描整个 HOME。",
+            "顶部主操作会在滚动时保持可见，并支持搜索、检查与事件浏览快捷键。"
+          ],
+          "items_en": [
+            "Event details remove low-value SHA ranges and show new commits newest first by commit time.",
+            "The activity list surfaces categories, authors, high-risk signals, and change size; new events remain marked until their check run is acknowledged.",
+            "Local project scope is managed explicitly through the system folder picker; Branch Radar no longer guesses development folders or scans the entire home directory when no scope is configured.",
+            "Primary actions stay visible while scrolling, with shortcuts for search, checks, and event navigation."
+          ]
+        },
+        {
+          "type": "修复",
+          "type_en": "Fixed",
+          "items": [
+            "顶部栏采用分离的收缩与展开阈值，避免滚动位置在临界点附近反复抖动。",
+            "每次进入更新日志都会重新校验最新内容；同步失败时保留上次内容与当前阅读状态。"
+          ],
+          "items_en": [
+            "Separate collapse and expand thresholds keep the top bar from flickering near the scroll boundary.",
+            "Opening the changelog revalidates its contents; a sync failure preserves the previous content and reading state."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-08-20",
+      "current": false,
+      "headline": "从监控工具，走向清晰的分支工作台",
+      "headline_en": "From a monitoring utility to a clear branch workspace",
+      "summary": "这一版集中改善日常查看、仓库整理与精确检查，让高频操作更直接，同时保留 Branch Radar 的本地优先和安全默认。",
+      "summary_en": "This release improves everyday review, repository organization, and targeted checks while preserving Branch Radar's local-first, safe-by-default design.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "仓库支持设置显示别名与多个分组标签，原项目名始终保留。",
+            "编辑仓库标签时会展示已有标签供快速复用，同时保留新标签输入。",
+            "支持勾选一个或多个关注分支执行精确检查，并可从分支动态中直接复查。",
+            "关注分支可以安全停止关注，历史事件与检查游标会继续保留。",
+            "已关联的飞书文档会显示名称与可点击入口。",
+            "新增遵循系统偏好的深浅主题，并支持带有照明过渡的手动切换。"
+          ],
+          "items_en": [
+            "Repositories support display aliases and multiple group tags while always retaining the original project name.",
+            "Repository profile editing shows existing tags for quick reuse while still accepting new tags.",
+            "Select one or more watched branches for a targeted check and rerun a check directly from branch activity.",
+            "Safely stop watching a branch while retaining historical events and its check cursor.",
+            "Linked Lark documents show their name and a direct link.",
+            "Light and dark themes follow the system preference and can be switched manually with an illuminated transition."
+          ]
+        },
+        {
+          "type": "改进",
+          "type_en": "Improved",
+          "items": [
+            "关注分支页面拆分为“已关注分支”和“添加关注”，不再被冗长的本地项目列表遮挡。",
+            "关注列表按仓库聚合，状态、最近检查时间与分支操作保持在同一视觉层级。",
+            "首屏状态收敛为紧凑摘要，需要关注区域只展示异常、待发布与近期变化。",
+            "关注分支的切换、标签、搜索与选择工具栏会在长列表中保持可见。",
+            "标签导航保留常用项，其余标签可在“更多标签”中搜索；批量选择后显示专属操作条。",
+            "仓库可以逐个或统一展开收起；异常仓库默认展开，收起后仍保留状态摘要，并会记住使用偏好。",
+            "仓库资料只保留一个清晰入口，分支菜单只承载查看动态、立即检查与停止关注。",
+            "关注分支时会在弹窗内展示当前阶段、已用时间和处理范围，也可以安全收起到后台继续。",
+            "检查任务会显示实际抓取、解析阶段、已用时间与进度，不再藏在弹窗之后。",
+            "首页与 doctor 会展示上次成功检查及连续失败状态，后台异常采用有上限的退避重试。",
+            "页面操作会随当前场景切换，并减少卡片中的重复英文说明。",
+            "设置页更清楚地呈现 Codex 与飞书的真实连接身份和可用状态。"
+          ],
+          "items_en": [
+            "The watched-branches page is split into Watched branches and Add watch, so local projects no longer overwhelm the main list.",
+            "Watches are grouped by repository, keeping status, last-check time, and branch actions at the same visual level.",
+            "The first screen is a compact summary; the attention area shows only errors, pending publication, and recent changes.",
+            "Tabs, tags, search, and selection tools remain visible through long watched-branch lists.",
+            "Tag navigation keeps frequent tags visible and moves the rest into a searchable More tags menu; batch selection reveals a dedicated action bar.",
+            "Repositories can expand individually or together; affected repositories open by default, retain a collapsed status summary, and remember the preference.",
+            "Repository profiles have one clear entry point, while branch menus focus on activity, immediate checks, and stopping a watch.",
+            "Watching branches shows stage, elapsed time, and scope inside the dialog and can continue safely in the background.",
+            "Check jobs show real fetch and analysis stages, elapsed time, and progress instead of hiding behind a dialog.",
+            "The overview and doctor show the last successful check and consecutive failure state, with bounded backoff for background failures.",
+            "Page actions adapt to the current context and reduce repetitive English labels in cards.",
+            "Settings more clearly presents the real Codex and Lark identities and their availability."
+          ]
+        },
+        {
+          "type": "性能",
+          "type_en": "Performance",
+          "items": [
+            "首屏使用单一数据库快照与轻量事件索引，避免重复连接和完整事实包解析。",
+            "资源支持压缩与条件缓存，列表改为按需批量渲染，长任务轮询会自动降频。",
+            "新增关注和日常检查都只获取对应的关注分支，不再为少量选择刷新整个远端。",
+            "不同 Git 对象库采用有界并发检查与扫描，同一仓库及 worktree 仍保持顺序安全。",
+            "首次基线采用独立的长超时；中断下载产生的临时 pack 会在进程结束后立即回收。"
+          ],
+          "items_en": [
+            "The first screen uses one database snapshot and a lightweight event index, avoiding repeated connections and full fact-bundle parsing.",
+            "Assets support compression and conditional caching, lists render in batches on demand, and long-job polling slows automatically.",
+            "New watches and routine checks fetch only the relevant watched branches instead of refreshing the entire remote for a small selection.",
+            "Checks and scans use bounded concurrency across separate Git object stores while preserving sequential safety within a repository and its worktrees.",
+            "Initial baselines use a dedicated long timeout, and interrupted downloads immediately reclaim temporary packs when the process exits."
+          ]
+        },
+        {
+          "type": "安全",
+          "type_en": "Security",
+          "items": [
+            "继续保持仅本机回环访问、严格会话校验和安全的 Web 数据裁剪。",
+            "补齐 GitHub、GitLab、Slack、OpenAI 与 AWS 裸密钥形态的脱敏保护。",
+            "状态库加入版本守门，并提供会保护未完成投递的显式历史清理命令。"
+          ],
+          "items_en": [
+            "Loopback-only access, strict session validation, and safe Web DTO trimming remain in place.",
+            "Redaction now covers raw GitHub, GitLab, Slack, OpenAI, and AWS secret formats.",
+            "The state database gains a version gate and an explicit history-pruning command that protects unfinished deliveries."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "date": "2026-08-18",
+      "current": false,
+      "headline": "Branch Radar 的第一个可用版本",
+      "headline_en": "The first usable Branch Radar release",
+      "summary": "建立本地优先的 Git 分支监控基础，提供可靠的事实采集、变化分类和可选的智能总结与文档交付。",
+      "summary_en": "Establishes a local-first Git branch monitoring foundation with reliable fact collection, change classification, and optional intelligent summaries and document delivery.",
+      "changes": [
+        {
+          "type": "新增",
+          "type_en": "New",
+          "items": [
+            "发现本地 Git 仓库并为关注分支建立静默基线。",
+            "识别普通前进、强制推送、回退、删除、重新出现与历史缺口。",
+            "提供本地 Web 控制台、Codex 可选总结与飞书文档发布。"
+          ],
+          "items_en": [
+            "Discover local Git repositories and establish silent baselines for watched branches.",
+            "Classify fast-forwards, force pushes, rewinds, deletions, recreations, and history gaps.",
+            "Provide a local Web console, optional Codex summaries, and publication to Lark documents."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Only the CI actions and the pinned dev tools have versions to track; the
+  # runtime deliberately has no third-party dependencies.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore"
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore"

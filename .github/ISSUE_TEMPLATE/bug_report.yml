@@ -1,0 +1,52 @@
+name: Bug report
+description: Something behaves differently from what it says it does
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste tokens, document URLs or repository remotes that carry
+        credentials. `branch-radar doctor --json` already redacts them; if you
+        paste anything else, check it first.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The exact commands, or the steps in the console.
+      placeholder: |
+        1. branch-radar init --root ~/projects
+        2. branch-radar check
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `branch-radar doctor --json`
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 15.5 / Ubuntu 24.04
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did this happen
+      options:
+        - Web console
+        - Command line
+        - Background service (launchd / systemd)
+        - Not sure
+    validations:
+      required: true

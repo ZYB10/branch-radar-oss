@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f3f6fa" id="theme-color-meta">
+  <script src="/assets/theme-bootstrap.js"></script>
+  <title>Branch Radar · 分支动态</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/assets/i18n.js" defer></script>
+  <script src="/assets/ui-model.js" defer></script>
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+  <svg class="icon-library" aria-hidden="true">
+    <symbol id="icon-branch" viewBox="0 0 24 24"><circle cx="7" cy="5" r="2.25"/><circle cx="17" cy="7" r="2.25"/><circle cx="7" cy="19" r="2.25"/><path d="M7 7.5v9M9.25 10.5h2.5A5.25 5.25 0 0 0 17 5.25"/></symbol>
+    <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M3 12h4l2.2-6 4.1 12 2.4-6H21"/></symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 9 19.37a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.08 14H3v-4h.08A1.7 1.7 0 0 0 4.63 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63 1.7 1.7 0 0 0 10 3.08V3h4v.08A1.7 1.7 0 0 0 15 4.63a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9 1.7 1.7 0 0 0 20.92 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.5 9A7.5 7.5 0 0 0 5.8 6.2L4 8m16 8-1.8 1.8A7.5 7.5 0 0 1 5.5 15"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.75" cy="10.75" r="6.75"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="icon-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="icon-warning" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9v5M12 17.5v.1"/></symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"/></symbol>
+    <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="m4 20 4.5-1 10-10-3.5-3.5-10 10L4 20Z"/><path d="m13.8 6.7 3.5 3.5M14.8 4.7l1.1-1.1a2 2 0 0 1 2.8 0l1.7 1.7a2 2 0 0 1 0 2.8l-1.1 1.1"/></symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24"><path d="M4 5v6.2L13.8 21 21 13.8 11.2 4H5a1 1 0 0 0-1 1Z"/><circle cx="8.5" cy="8.5" r="1.5"/></symbol>
+    <symbol id="icon-log" viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol>
+    <symbol id="icon-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.25"/><circle cx="12" cy="12" r="1.25"/><circle cx="19" cy="12" r="1.25"/></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v2M12 19.5v2M4.5 12h-2M21.5 12h-2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 15.4A8.3 8.3 0 0 1 8.6 4a8.3 8.3 0 1 0 11.4 11.4Z"/></symbol>
+    <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M3 6.5h6l2 2h10v10.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 9h18"/></symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="icon-focus" viewBox="0 0 24 24"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="icon-fit" viewBox="0 0 24 24"><path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4"/><path d="m4 8 5-5M20 8l-5-5M4 16l5 5M20 16l-5 5"/></symbol>
+    <symbol id="icon-now" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+    <symbol id="icon-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 9l3 3-3 3"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="side-rail" aria-label="主导航">
+      <a class="brand" href="#overview" aria-label="Branch Radar 首页">
+        <img class="brand-mark" src="/assets/branch-radar-mark.svg" width="36" height="36" alt="">
+        <span class="brand-copy"><strong>Branch</strong><span>Radar</span></span>
+      </a>
+      <button class="rail-collapse-button" id="rail-collapse-button" type="button" aria-label="收起侧栏" aria-expanded="true" aria-controls="primary-navigation">
+        <svg aria-hidden="true"><use href="#icon-sidebar"></use></svg>
+      </button>
+
+      <nav class="rail-nav" id="primary-navigation">
+        <a class="nav-item is-active" href="#overview" data-view="overview">
+          <svg aria-hidden="true"><use href="#icon-activity"></use></svg><span>动态</span>
+        </a>
+        <a class="nav-item" href="#projects" data-view="projects">
+          <svg aria-hidden="true"><use href="#icon-branch"></use></svg><span>关注分支</span>
+        </a>
+        <a class="nav-item" href="#changelog" data-view="changelog">
+          <svg aria-hidden="true"><use href="#icon-log"></use></svg><span>更新日志</span>
+        </a>
+        <a class="nav-item" href="#settings" data-view="settings">
+          <svg aria-hidden="true"><use href="#icon-settings"></use></svg><span>设置</span>
+        </a>
+      </nav>
+
+      <div class="rail-footer">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false">
+          <span class="theme-toggle-orbit" aria-hidden="true"><svg><use href="#icon-sun"></use></svg><i></i><svg><use href="#icon-moon"></use></svg></span>
+          <span class="theme-toggle-copy"><small>外观</small><strong data-theme-label>浅色</strong></span>
+        </button>
+        <button class="language-toggle" type="button" data-language-toggle data-i18n-skip aria-label="切换到英文" aria-pressed="false">
+          <span class="language-toggle-badge" data-language-value aria-hidden="true">中</span>
+          <span class="theme-toggle-copy"><small data-language-caption>语言</small><strong data-language-label>中文</strong></span>
+        </button>
+        <span class="local-badge"><i aria-hidden="true"></i>仅在本机运行</span>
+        <span id="app-version" class="version-label">Branch Radar</span>
+      </div>
+    </aside>
+
+    <main id="main-content" class="main-content" tabindex="-1">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="view-eyebrow">BRANCH RADAR / INBOX</p>
+          <h1 id="view-title">分支动态</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button mobile-language-toggle" type="button" data-language-toggle data-i18n-skip aria-label="切换到英文" aria-pressed="false">
+            <span data-language-value aria-hidden="true">中</span>
+          </button>
+          <button class="icon-button mobile-theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false">
+            <svg class="theme-icon-light" aria-hidden="true"><use href="#icon-sun"></use></svg>
+            <svg class="theme-icon-dark" aria-hidden="true"><use href="#icon-moon"></use></svg>
+          </button>
+          <button class="button button-quiet" id="check-options-button" type="button" aria-label="打开高级检查选项" aria-haspopup="dialog" aria-controls="check-dialog">
+            <svg aria-hidden="true"><use href="#icon-sliders"></use></svg><span>检查选项</span>
+          </button>
+          <div class="shortcut-help">
+            <button class="icon-button shortcut-help-trigger" id="shortcut-help-trigger" type="button" aria-label="查看键盘快捷键" aria-haspopup="dialog" aria-expanded="false" aria-controls="shortcut-help-popover">
+              <span aria-hidden="true">?</span>
+            </button>
+            <div class="shortcut-help-popover" id="shortcut-help-popover" role="dialog" aria-label="键盘快捷键" hidden>
+              <div><strong>键盘快捷键</strong><small>在输入框和弹窗中不会触发</small></div>
+              <dl>
+                <div><dt><kbd>/</kbd></dt><dd>聚焦当前搜索</dd></div>
+                <div><dt><kbd>R</kbd></dt><dd>安全检查全部分支</dd></div>
+                <div><dt><kbd>J</kbd><kbd>K</kbd></dt><dd>浏览事件</dd></div>
+                <div><dt><kbd>+</kbd><kbd>−</kbd></dt><dd>缩放画布</dd></div>
+                <div><dt><kbd>0</kbd><kbd>F</kbd></dt><dd>适应画布 / 专注模式</dd></div>
+                <div><dt><kbd>?</kbd></dt><dd>显示或关闭帮助</dd></div>
+              </dl>
+            </div>
+          </div>
+          <button class="button button-primary" id="check-button" type="button" aria-label="检查全部关注分支" aria-keyshortcuts="R">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>检查全部</span>
+          </button>
+          <button class="button button-primary" id="connections-refresh-button" type="button" hidden>
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>刷新设置状态</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="persistent-error" id="service-error" role="alert" hidden>
+        <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+        <div><strong>暂时无法读取本地服务</strong><p id="service-error-copy">请确认启动终端仍在运行，然后重新连接。</p></div>
+        <button class="button button-secondary" id="retry-dashboard" type="button">重新连接</button>
+      </div>
+
+      <section class="view is-active" id="view-overview" data-view-panel="overview" aria-labelledby="view-title">
+        <div class="inbox-summary" id="overview-status">
+          <div class="inbox-summary-copy">
+            <span class="section-kicker"><i id="live-indicator" aria-hidden="true"></i><span id="overview-kicker" role="status" aria-live="polite" aria-atomic="true">正在读取监控状态</span></span>
+            <div><h2 id="overview-headline">正在读取分支状态</h2><p id="overview-description">只更新远程引用，不会修改仓库工作文件。</p></div>
+          </div>
+          <div class="summary-facts" aria-label="监控概况">
+            <span class="summary-fact"><strong id="metric-branches">—</strong><small id="metric-repositories">关注分支</small></span>
+            <span class="summary-fact"><strong id="metric-errors">—</strong><small>需要处理</small></span>
+            <span class="summary-fact"><strong id="metric-deliveries">—</strong><small>待发布</small></span>
+          </div>
+          <div class="last-check"><span>上次成功</span><strong id="overview-last-check">读取中</strong></div>
+        </div>
+
+        <section class="check-run-banner" id="check-run-banner" aria-labelledby="check-run-title" hidden>
+          <div class="check-run-signature" aria-hidden="true"><i></i><span></span></div>
+          <div class="check-run-shell">
+            <header class="check-run-header">
+              <div class="check-run-copy">
+                <span class="check-run-kicker" id="check-run-kicker">CHECK RUN</span>
+                <h2 id="check-run-title">本次检查</h2>
+                <p id="check-run-overview"></p>
+              </div>
+              <div class="check-run-actions">
+                <span class="check-run-queue" id="check-run-queue" hidden></span>
+                <button class="button button-quiet check-run-toggle" id="check-run-toggle" type="button" aria-expanded="false" aria-controls="check-run-details"><span>查看结果</span><svg aria-hidden="true"><use href="#icon-chevron"></use></svg></button>
+                <button class="button button-secondary" id="check-run-acknowledge" type="button">标为已查看</button>
+              </div>
+            </header>
+            <div class="check-run-stats" id="check-run-stats"></div>
+            <div class="check-run-details" id="check-run-details" hidden></div>
+          </div>
+          <p class="sr-only" id="check-run-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+        </section>
+
+        <div class="inbox-grid">
+          <article class="panel activity-inbox branch-canvas-panel">
+            <header class="panel-header branch-canvas-header">
+              <div class="branch-canvas-heading">
+                <span class="branch-canvas-kicker">BRANCH EVOLUTION CANVAS</span>
+                <h2>分支演化画布</h2>
+                <p>横轴优先使用 Git 提交时间；无法可靠取得时回退为检查时间。缩放以显露作者与修改。</p>
+              </div>
+              <div class="signal-range-switch" role="group" aria-label="按检查时间筛选发现范围">
+                <button id="signal-range-24" type="button" data-signal-range="24" aria-pressed="true" aria-controls="activity-list">近 24 小时发现</button>
+                <button id="signal-range-168" type="button" data-signal-range="168" aria-pressed="false" aria-controls="activity-list">近 7 天发现</button>
+              </div>
+            </header>
+            <div class="activity-toolbar inbox-toolbar">
+              <label class="search-field"><svg aria-hidden="true"><use href="#icon-search"></use></svg><span class="sr-only">搜索事件</span><input id="event-search" type="search" placeholder="搜索仓库、分支、贡献者或摘要" aria-keyshortcuts="/"></label>
+              <div class="kind-filter">
+                <label class="sr-only" for="event-kind-filter">按事件类型筛选</label>
+                <select id="event-kind-filter" class="sr-only" tabindex="-1">
+                  <option value="all">全部类型</option>
+                  <option value="fast_forward">普通前进</option>
+                  <option value="force_push">强制推送</option>
+                  <option value="rewind">回退</option>
+                  <option value="deleted">分支删除</option>
+                  <option value="recreated">重新出现</option>
+                  <option value="history_gap">历史缺口</option>
+                </select>
+                <button class="kind-filter-trigger" id="event-kind-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="event-kind-menu" aria-label="按事件类型筛选">
+                  <i class="kind-swatch kind-all" aria-hidden="true"></i>
+                  <span id="event-kind-label">全部类型</span>
+                  <svg aria-hidden="true"><use href="#icon-chevron"></use></svg>
+                </button>
+                <ul class="kind-filter-menu" id="event-kind-menu" role="listbox" aria-label="事件类型" hidden></ul>
+              </div>
+              <div class="branch-canvas-controls" role="group" aria-label="画布视图控制">
+                <button class="canvas-icon-button" id="branch-canvas-zoom-out" type="button" aria-label="缩小"><svg aria-hidden="true"><use href="#icon-minus"></use></svg></button>
+                <output class="canvas-zoom-level" id="branch-canvas-zoom-level" aria-live="polite">100%</output>
+                <button class="canvas-icon-button" id="branch-canvas-zoom-in" type="button" aria-label="放大"><svg aria-hidden="true"><use href="#icon-plus"></use></svg></button>
+                <button class="canvas-icon-button" id="branch-canvas-fit" type="button" aria-label="适应全部"><svg aria-hidden="true"><use href="#icon-fit"></use></svg></button>
+                <button class="canvas-icon-button" id="branch-canvas-latest" type="button" aria-label="回到现在"><svg aria-hidden="true"><use href="#icon-now"></use></svg></button>
+                <button class="canvas-focus-button" id="branch-canvas-focus" type="button" aria-label="进入专注模式" aria-pressed="false">
+                  <svg aria-hidden="true"><use href="#icon-focus"></use></svg><span>专注画布</span>
+                </button>
+              </div>
+            </div>
+            <div class="activity-context-bar">
+              <div class="activity-scope" id="activity-scope" hidden>
+                <svg aria-hidden="true"><use href="#icon-branch"></use></svg>
+                <span>正在查看 <strong id="activity-scope-label">所选分支</strong></span>
+                <button class="scope-check" id="activity-scope-check" type="button" data-check-control><svg aria-hidden="true"><use href="#icon-refresh"></use></svg>检查此分支</button>
+                <button class="scope-clear" id="activity-scope-clear" type="button" aria-label="清除分支筛选">清除</button>
+              </div>
+              <span class="activity-result-status" id="activity-result-status" role="status" aria-live="polite" aria-atomic="true"></span>
+            </div>
+            <div class="branch-canvas-shell" id="branch-canvas-shell">
+              <div id="activity-list" class="branch-canvas" role="region" aria-label="按提交时间优先排列的分支演化画布" aria-describedby="branch-canvas-hint" aria-keyshortcuts="+ - 0 End F" aria-busy="true" tabindex="0">
+                <div class="branch-canvas-empty" aria-hidden="true"></div>
+              </div>
+              <p class="branch-canvas-hint" id="branch-canvas-hint">发现范围按检查时间筛选；横轴优先显示 Git 提交时间，取不到可靠时间时会明确标记并回退。拖动或滚轮浏览，捏合、Ctrl + 滚轮或加减键缩放。</p>
+              <aside class="branch-author-inspector" id="branch-author-inspector" aria-live="polite" hidden></aside>
+            </div>
+            <div class="activity-load-more-wrap">
+              <button class="button button-quiet" id="activity-load-more" type="button" hidden>加载更多动态</button>
+            </div>
+          </article>
+
+          <article class="panel attention-panel">
+            <header class="panel-header">
+              <div><h2>需要关注</h2></div>
+              <div class="panel-header-actions">
+                <a class="text-link" href="#projects">管理<svg aria-hidden="true"><use href="#icon-arrow"></use></svg></a>
+              </div>
+            </header>
+            <div id="watch-preview" class="watch-list watch-preview-groups" aria-live="off"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-projects" data-view-panel="projects" hidden>
+        <div class="watch-command-deck">
+          <div class="watch-workspace-header">
+            <div class="watch-workspace-tabs" role="tablist" aria-label="关注分支页面内容">
+              <button class="watch-workspace-tab is-active" id="watch-tab-watched" type="button" role="tab" aria-selected="true" aria-controls="watch-panel-watched" tabindex="0" data-watch-tab="watched">
+                <svg aria-hidden="true"><use href="#icon-branch"></use></svg><span>已关注分支</span><small id="watch-tab-count">0</small>
+              </button>
+              <button class="watch-workspace-tab" id="watch-tab-add" type="button" role="tab" aria-selected="false" aria-controls="watch-panel-add" tabindex="-1" data-watch-tab="add">
+                <svg aria-hidden="true"><use href="#icon-plus"></use></svg><span>添加关注</span>
+              </button>
+            </div>
+            <p id="watch-workspace-description">查看状态、筛选分支并执行批量检查。</p>
+          </div>
+          <div class="watch-list-controls" id="watch-list-controls">
+            <div class="repository-tag-navigation" id="repository-tag-navigation" hidden>
+              <span class="repository-tag-navigation-label"><svg aria-hidden="true"><use href="#icon-tag"></use></svg>标签</span>
+              <div class="repository-tag-switcher" id="repository-tag-switcher" aria-label="按标签筛选仓库"></div>
+            </div>
+            <div class="table-toolbar">
+              <label class="search-field"><svg aria-hidden="true"><use href="#icon-search"></use></svg><span class="sr-only">搜索别名、仓库、标签或分支</span><input id="project-search" type="search" placeholder="搜索别名、仓库、标签或分支" aria-keyshortcuts="/"></label>
+              <button class="button button-quiet button-compact" id="select-visible-watches" type="button">选择当前列表</button>
+              <button class="button button-quiet button-compact repository-expand-all" id="toggle-all-repositories" type="button" hidden><svg aria-hidden="true"><use href="#icon-chevron"></use></svg><span>全部展开</span></button>
+              <span id="project-count" class="record-count" role="status" aria-live="polite" aria-atomic="true" tabindex="-1">0 个分支</span>
+            </div>
+          </div>
+        </div>
+        <div class="watch-workspace-panel" id="watch-panel-watched" role="tabpanel" aria-labelledby="watch-tab-watched" data-watch-panel="watched">
+          <div class="panel table-panel">
+            <section class="repository-list" id="project-list" aria-label="关注中的仓库与分支"></section>
+          </div>
+        </div>
+        <div class="watch-workspace-panel" id="watch-panel-add" role="tabpanel" aria-labelledby="watch-tab-add" data-watch-panel="add" hidden>
+          <article class="panel local-projects-panel">
+            <header class="panel-header">
+              <div><h2>本地项目</h2></div>
+              <div class="panel-header-actions">
+                <span id="local-project-count" class="record-count">尚未扫描</span>
+                <button class="button button-quiet button-compact scan-roots-button" id="scan-roots-button" type="button" aria-haspopup="dialog" aria-controls="scan-roots-dialog" aria-label="设置本地项目扫描范围" disabled><svg aria-hidden="true"><use href="#icon-sliders"></use></svg><span>扫描范围</span></button>
+                <button class="button button-quiet button-compact" id="projects-refresh-button" type="button" disabled><svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>重新扫描</span></button>
+              </div>
+            </header>
+            <form class="remote-associate" id="remote-associate-form" novalidate>
+              <label class="search-field" for="remote-url"><svg aria-hidden="true"><use href="#icon-search"></use></svg><span class="sr-only">GitHub 仓库地址</span><input id="remote-url" name="remote" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="粘贴 GitHub 仓库地址，例如 https://github.com/org/repo"></label>
+              <button class="button button-primary" id="associate-remote-button" type="submit">关联仓库</button>
+            </form>
+            <p class="field-help">也可以直接从下方本地 checkout 选择分支；如果没有匹配项，Branch Radar 会在 clone 前明确确认目录，且不会保存凭证。</p>
+            <p class="field-error" id="remote-url-error" role="alert"></p>
+            <div class="scan-status" id="scan-status" hidden><span class="task-spinner" aria-hidden="true"></span><div><strong>正在扫描本地仓库</strong><p id="scan-roots-copy">读取已配置的本地扫描目录</p></div></div>
+            <div class="local-project-toolbar">
+              <label class="search-field"><svg aria-hidden="true"><use href="#icon-search"></use></svg><span class="sr-only">搜索本地项目</span><input id="local-project-search" type="search" autocomplete="off" placeholder="搜索项目、远程仓库或当前分支" aria-controls="local-project-list" aria-keyshortcuts="/"></label>
+              <span id="local-project-page-status" class="record-count" role="status" aria-live="polite" aria-atomic="true">等待扫描</span>
+            </div>
+            <div id="local-project-list" class="local-project-list"></div>
+            <nav class="local-project-pagination" id="local-project-pagination" aria-label="本地项目分页">
+              <button class="button button-quiet" id="local-project-prev" type="button" disabled aria-label="上一页本地项目">上一页</button>
+              <button class="button button-quiet" id="local-project-next" type="button" disabled aria-label="下一页本地项目">下一页</button>
+            </nav>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-changelog" data-view-panel="changelog" hidden>
+        <div class="changelog-overview" aria-label="更新日志概览">
+          <p>只记录真正影响使用方式的变化。先看重点，需要时再展开完整记录。</p>
+          <div class="changelog-current" aria-label="当前版本">
+            <span>当前版本</span>
+            <strong id="changelog-current-version">—</strong>
+            <small id="changelog-current-date">读取中</small>
+          </div>
+        </div>
+        <div class="changelog-timeline" id="changelog-list" aria-live="polite" aria-busy="true">
+          <div class="changelog-loading"><span class="task-spinner" aria-hidden="true"></span><span>正在读取更新记录</span></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings" data-view-panel="settings" hidden>
+        <div class="section-intro">
+          <p>在本机安排检查与通知；Codex 和飞书仍按需连接，不影响基础监控。</p>
+          <p class="sr-only" id="integration-status-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+        <div class="connections-grid">
+          <article class="integration-card monitoring-card" id="monitoring-card" aria-labelledby="monitoring-title">
+            <div class="integration-icon monitoring-icon" aria-hidden="true"><svg><use href="#icon-activity"></use></svg><i></i></div>
+            <div class="integration-main monitoring-main">
+              <div class="monitoring-heading">
+                <div><span class="monitoring-kicker">ACTIVE MONITORING</span><h2 id="monitoring-title">主动监控</h2></div>
+                <span class="status-chip is-loading" id="monitoring-service-status">读取中</span>
+              </div>
+              <p>系统按设置的频率唤醒 Branch Radar，检查结束即退出；仅在发现变化时通知你。</p>
+              <dl class="monitoring-facts" aria-label="监控运行状态">
+                <div><dt>本机服务</dt><dd id="monitoring-service-detail">正在读取…</dd></div>
+                <div><dt>上次成功</dt><dd id="monitoring-last-success">正在读取…</dd></div>
+                <div><dt>下次预计</dt><dd id="monitoring-next-run">正在读取…</dd></div>
+              </dl>
+            </div>
+
+            <form class="monitoring-form" id="monitoring-form" novalidate aria-busy="true">
+              <div class="monitoring-master-row">
+                <span class="monitoring-option-copy" id="monitoring-enabled-copy"><strong>后台监控</strong><small>关闭后不会定时检查；手动检查仍可使用。</small></span>
+                <label class="switch-control">
+                  <span class="sr-only">启用后台监控</span>
+                  <input id="monitoring-enabled" name="enabled" type="checkbox" aria-describedby="monitoring-enabled-copy">
+                  <span class="switch-track" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+
+              <div class="monitoring-settings-grid">
+                <fieldset class="monitoring-setting-group monitoring-frequency" id="monitoring-frequency-group">
+                  <legend>检查频率</legend>
+                  <p id="monitoring-frequency-help">每轮只读取关注分支；15 分钟兼顾及时性与资源消耗。</p>
+                  <div class="monitoring-frequency-options" role="radiogroup" aria-describedby="monitoring-frequency-help monitoring-custom-interval monitoring-frequency-error">
+                    <label><input type="radio" name="monitoring-interval" value="300"><span>5 分钟</span></label>
+                    <label class="is-recommended"><input type="radio" name="monitoring-interval" value="900" checked><span>15 分钟<small>推荐</small></span></label>
+                    <label><input type="radio" name="monitoring-interval" value="1800"><span>30 分钟</span></label>
+                    <label><input type="radio" name="monitoring-interval" value="3600"><span>60 分钟</span></label>
+                  </div>
+                  <p class="monitoring-custom-interval" id="monitoring-custom-interval" hidden></p>
+                  <p class="field-error monitoring-field-error" id="monitoring-frequency-error" role="alert"></p>
+                </fieldset>
+
+                <fieldset class="monitoring-setting-group monitoring-notifications" id="monitoring-notification-group">
+                  <legend>变化通知</legend>
+                  <div class="monitoring-option-row">
+                    <span class="monitoring-option-copy" id="monitoring-notifications-copy"><strong>系统通知</strong><small id="monitoring-notifications-help">仅在发现新变化时提醒，每轮合并为一条。</small></span>
+                    <label class="switch-control">
+                      <span class="sr-only">启用系统通知</span>
+                      <input id="monitoring-notifications" name="notifications_enabled" type="checkbox" aria-describedby="monitoring-notifications-copy">
+                      <span class="switch-track" aria-hidden="true"><i></i></span>
+                    </label>
+                  </div>
+                  <div class="monitoring-quiet-block">
+                    <div class="monitoring-option-row">
+                      <span class="monitoring-option-copy" id="monitoring-quiet-copy"><strong>勿扰时段</strong><small>跨越午夜也可以，例如 22:00 至 08:00。</small></span>
+                      <label class="switch-control">
+                        <span class="sr-only">启用勿扰时段</span>
+                        <input id="monitoring-quiet-enabled" name="quiet_enabled" type="checkbox" aria-describedby="monitoring-quiet-copy">
+                        <span class="switch-track" aria-hidden="true"><i></i></span>
+                      </label>
+                    </div>
+                    <div class="monitoring-quiet-times" id="monitoring-quiet-times">
+                      <label for="monitoring-quiet-start"><span>开始</span><input id="monitoring-quiet-start" name="quiet_start" type="time" value="22:00" step="60" aria-describedby="monitoring-quiet-copy monitoring-quiet-error"></label>
+                      <span aria-hidden="true">—</span>
+                      <label for="monitoring-quiet-end"><span>结束</span><input id="monitoring-quiet-end" name="quiet_end" type="time" value="08:00" step="60" aria-describedby="monitoring-quiet-copy monitoring-quiet-error"></label>
+                    </div>
+                    <p class="field-error monitoring-field-error" id="monitoring-quiet-error" role="alert"></p>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="monitoring-form-footer">
+                <p class="monitoring-save-status" id="monitoring-save-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1">正在读取本机监控设置…</p>
+                <div>
+                  <button class="button button-quiet" id="monitoring-reload-button" type="button" hidden><svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>重新读取</span></button>
+                  <button class="button button-primary" id="monitoring-save-button" type="submit" disabled><span>保存监控设置</span></button>
+                </div>
+              </div>
+            </form>
+          </article>
+
+          <article class="integration-card" id="codex-card">
+            <div class="integration-icon codex-icon"><svg aria-hidden="true"><use href="#icon-code"></use></svg></div>
+            <div class="integration-main">
+              <h2>Codex CLI</h2>
+              <div class="integration-identity" id="codex-identity">
+                <span class="identity-avatar codex-avatar" aria-hidden="true"><svg><use href="#icon-code"></use></svg></span>
+                <span class="identity-copy"><strong id="codex-identity-name">等待检测</strong><small id="codex-identity-meta">Codex CLI</small></span>
+                <span class="status-chip is-loading" id="codex-status">读取中</span>
+              </div>
+              <p id="codex-description">正在检查本机登录状态…</p>
+            </div>
+            <div class="integration-note"><strong>安全默认</strong><p>只有你在检查前勾选“使用 Codex”时，才会发送经过裁剪与过滤的变更内容。</p></div>
+          </article>
+
+          <article class="integration-card" id="lark-card">
+            <div class="integration-icon lark-icon"><svg aria-hidden="true"><use href="#icon-doc"></use></svg></div>
+            <div class="integration-main">
+              <h2>飞书文档</h2>
+              <div class="integration-identity" id="lark-identity">
+                <span class="identity-avatar lark-avatar" id="lark-identity-avatar" aria-hidden="true">飞</span>
+                <span class="identity-copy"><strong id="lark-identity-name">等待检测</strong><small id="lark-identity-meta">lark-cli 用户身份</small></span>
+                <span class="status-chip is-loading" id="lark-status">读取中</span>
+              </div>
+              <p id="lark-description">正在检查 lark-cli 用户身份…</p>
+              <div class="linked-document" id="lark-document-reference" hidden>
+                <span class="linked-document-icon" aria-hidden="true"><svg><use href="#icon-doc"></use></svg></span>
+                <span class="linked-document-copy"><small>关联文档</small><strong id="lark-document-name">已关联的飞书项目文档</strong></span>
+                <a class="linked-document-action" id="lark-document-link" target="_blank" rel="noopener noreferrer" hidden>打开文档<svg aria-hidden="true"><use href="#icon-arrow"></use></svg></a>
+                <span class="linked-document-status" id="lark-document-status">已关联</span>
+              </div>
+            </div>
+            <form class="document-form" id="lark-connect-form" novalidate>
+              <label for="lark-document">已有文档链接或 token</label>
+              <div class="input-action"><input id="lark-document" name="document" autocomplete="off" placeholder="https://…/docx/…"><button class="button button-secondary" type="submit">验证并关联</button></div>
+              <p class="field-help">只保存文档地址，不读取或复制飞书 access token。</p>
+              <p class="field-error" id="lark-document-error" role="alert"></p>
+            </form>
+            <div class="integration-actions"><button class="button button-quiet" id="create-lark-button" type="button"><svg aria-hidden="true"><use href="#icon-plus"></use></svg>新建项目文档</button><button class="button button-primary" id="publish-button" type="button">发布待处理事件</button></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="batch-action-bar" id="batch-action-bar" aria-label="分支批量操作" hidden>
+    <span role="status" aria-live="polite" aria-atomic="true"><strong id="batch-selected-count">0</strong> 个分支已选择</span>
+    <div>
+      <button class="button button-quiet button-compact" id="clear-selected-watches" type="button">清除选择</button>
+      <button class="button button-primary button-compact" id="check-selected-button" type="button" data-check-control disabled><svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>检查已选</span></button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" aria-label="移动端主导航">
+    <a href="#overview" data-view="overview" class="is-active"><svg aria-hidden="true"><use href="#icon-activity"></use></svg><span>动态</span></a>
+    <a href="#projects" data-view="projects"><svg aria-hidden="true"><use href="#icon-branch"></use></svg><span>分支</span></a>
+    <a href="#changelog" data-view="changelog"><svg aria-hidden="true"><use href="#icon-log"></use></svg><span>日志</span></a>
+    <a href="#settings" data-view="settings"><svg aria-hidden="true"><use href="#icon-settings"></use></svg><span>设置</span></a>
+  </nav>
+
+  <section class="task-bar" id="task-bar" aria-labelledby="task-context" hidden>
+    <div class="task-bar-header">
+      <span class="task-state-icon"><span class="task-spinner" aria-hidden="true"></span><svg aria-hidden="true"><use href="#icon-check"></use></svg></span>
+      <div class="task-bar-copy" role="status" aria-live="polite" aria-atomic="false">
+        <span class="task-context" id="task-context">后台任务</span>
+        <strong id="task-title">正在处理</strong>
+        <span id="task-description">任务会在本机后台继续</span>
+      </div>
+      <div class="task-bar-meta"><strong id="task-percent" hidden>0%</strong><time id="task-elapsed" aria-label="任务已用时间">0 秒</time></div>
+      <button class="task-compact-action" id="task-cancel-button" type="button" hidden>取消</button>
+      <button class="icon-button task-toggle" id="task-toggle" type="button" aria-expanded="false" aria-controls="task-details" aria-label="展开任务详情" hidden><svg aria-hidden="true"><use href="#icon-chevron"></use></svg></button>
+    </div>
+    <div class="task-progress-line is-indeterminate" id="task-progress-track" role="progressbar" aria-label="后台任务进度" aria-valuemin="0" aria-valuemax="100"><b></b></div>
+    <div class="task-details" id="task-details" hidden>
+      <p id="task-detail-copy">任务会在后台继续，不影响浏览其他页面。</p>
+      <ol class="task-stages" id="task-stages" aria-label="克隆阶段" hidden>
+        <li data-clone-phase="prepare"><i aria-hidden="true"></i><span>准备</span></li>
+        <li data-clone-phase="connect"><i aria-hidden="true"></i><span>连接</span></li>
+        <li data-clone-phase="download"><i aria-hidden="true"></i><span>下载</span></li>
+        <li data-clone-phase="verify"><i aria-hidden="true"></i><span>验证</span></li>
+        <li data-clone-phase="complete"><i aria-hidden="true"></i><span>完成</span></li>
+      </ol>
+      <p class="task-error" id="task-error" role="alert"></p>
+      <div class="task-actions">
+        <button class="button button-quiet button-compact" id="task-edit-button" type="button" hidden>调整设置</button>
+        <button class="button button-secondary button-compact" id="task-retry-button" type="button" hidden><svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>重试</span></button>
+        <button class="button button-primary button-compact" id="task-open-button" type="button" hidden>选择分支</button>
+        <button class="button button-quiet button-compact" id="task-dismiss-button" type="button" hidden>关闭记录</button>
+      </div>
+    </div>
+    <span class="sr-only" id="task-announcement" role="status" aria-live="polite" aria-atomic="true"></span>
+  </section>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog class="modal action-modal scan-roots-modal" id="scan-roots-dialog" aria-labelledby="scan-roots-dialog-title" aria-describedby="scan-roots-dialog-description">
+    <form class="modal-shell compact-shell" id="scan-roots-form" novalidate>
+      <header class="modal-header"><div><span class="modal-step">LOCAL DISCOVERY</span><h2 id="scan-roots-dialog-title">设置扫描范围</h2><p id="scan-roots-dialog-description">只在你选择的目录中查找本地 Git checkout，不会扫描整台电脑，也不会修改仓库。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="scan-roots-dialog" aria-label="关闭扫描范围设置"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="scan-roots-fields">
+        <button class="button button-primary scan-root-picker" id="scan-root-picker" type="button" aria-describedby="scan-roots-help"><svg aria-hidden="true"><use href="#icon-folder"></use></svg><span>选择本机文件夹</span></button>
+        <div class="scan-root-picker-status" id="scan-root-picker-status" role="status" aria-live="polite" aria-atomic="true" hidden><span class="task-spinner" aria-hidden="true"></span><div><strong id="scan-root-picker-status-title">等待你在系统窗口中选择文件夹…</strong><p id="scan-root-picker-status-copy">完成选择或取消后，结果会自动回到这里。</p></div></div>
+        <div class="scan-roots-heading"><div><strong>已选目录</strong><p>这些路径只保存在本机。可继续选择，也可以移除不再需要的目录。</p></div><span id="scan-roots-count" aria-live="polite">0 个目录</span></div>
+        <div class="scan-roots-list" id="scan-roots-list"></div>
+        <details class="scan-root-manual" id="scan-root-manual">
+          <summary>手动输入路径（高级）<svg aria-hidden="true"><use href="#icon-chevron"></use></svg></summary>
+          <div class="scan-root-manual-fields">
+            <label class="scan-root-field" for="scan-root-manual-input"><span>目录路径</span><input id="scan-root-manual-input" type="text" autocomplete="off" spellcheck="false" placeholder="例如 ~/projects" aria-describedby="scan-roots-help scan-roots-error"></label>
+            <button class="button button-quiet" id="scan-root-manual-add" type="button"><svg aria-hidden="true"><use href="#icon-plus"></use></svg><span>添加路径</span></button>
+          </div>
+        </details>
+        <p class="field-help" id="scan-roots-help">可保存空列表；此时 Branch Radar 不会自动扫描本地文件。</p>
+        <p class="field-error scan-roots-error" id="scan-roots-error" role="alert" tabindex="-1"></p>
+      </div>
+      <footer class="modal-footer"><span id="scan-roots-footer-copy">保存后会使用新范围重新扫描</span><div><button class="button button-quiet" type="button" data-close-dialog="scan-roots-dialog">取消</button><button class="button button-primary scan-roots-save" id="scan-roots-save" type="submit"><svg aria-hidden="true"><use href="#icon-refresh"></use></svg><span>保存并重新扫描</span></button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal clone-modal" id="clone-dialog" aria-labelledby="clone-dialog-title" aria-describedby="clone-dialog-description">
+    <form class="modal-shell compact-shell" id="clone-form" novalidate>
+      <header class="modal-header">
+        <div><span class="modal-step">SAFE GIT CLONE</span><h2 id="clone-dialog-title">确认克隆仓库</h2><p id="clone-dialog-description">本机没有匹配的 checkout。确认后会把仓库克隆到你选择的扫描目录。</p></div>
+        <button class="icon-button modal-close" id="clone-dialog-close" type="button" data-close-dialog="clone-dialog" aria-label="关闭克隆确认"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button>
+      </header>
+      <div class="clone-confirmation" id="clone-confirmation">
+        <dl class="clone-summary">
+          <div><dt>仓库</dt><dd id="clone-repository" data-i18n-skip>—</dd></div>
+        </dl>
+        <div class="clone-fields">
+          <div class="clone-field-group">
+            <div class="clone-field">
+              <span id="clone-parent-label">克隆到</span>
+              <div class="clone-parent-picker" id="clone-parent-picker">
+                <select class="sr-only" id="clone-parent" name="parent" tabindex="-1" aria-hidden="true" required></select>
+                <button class="clone-parent-trigger" id="clone-parent-trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="clone-parent-listbox" aria-labelledby="clone-parent-label clone-parent-value" aria-describedby="clone-parent-help clone-error">
+                  <span class="clone-parent-trigger-icon" aria-hidden="true"><svg><use href="#icon-folder"></use></svg></span>
+                  <span class="clone-parent-value" id="clone-parent-value">选择扫描目录</span>
+                  <svg class="clone-parent-chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+                </button>
+                <ul class="clone-parent-listbox" id="clone-parent-listbox" role="listbox" aria-labelledby="clone-parent-label" hidden></ul>
+              </div>
+            </div>
+            <p class="field-help" id="clone-parent-help">只能选择已经配置的扫描目录。</p>
+          </div>
+          <div class="clone-field-group">
+            <label class="clone-field" for="clone-directory-name"><span>目录名</span><input id="clone-directory-name" name="directory_name" type="text" maxlength="180" autocomplete="off" spellcheck="false" aria-describedby="clone-name-help clone-error" required></label>
+            <p class="field-help" id="clone-name-help">目录名只能包含常见文件名字符；目标已存在时不会覆盖。</p>
+          </div>
+        </div>
+        <div class="clone-safety-note"><svg aria-hidden="true"><use href="#icon-check"></use></svg><p>Branch Radar 只会运行 Git clone，不会保存凭证，也不会修改其他仓库。</p></div>
+      </div>
+      <p class="field-error clone-error" id="clone-error" role="alert" tabindex="-1"></p>
+      <footer class="modal-footer">
+        <span id="clone-footer-copy">克隆仓库时会访问远程地址并写入所选本地目录。</span>
+        <div>
+          <button class="button button-quiet" id="clone-dismiss-button" type="button" data-close-dialog="clone-dialog">取消</button>
+          <button class="button button-primary" id="clone-submit-button" type="submit"><svg aria-hidden="true"><use href="#icon-folder"></use></svg><span>开始克隆</span></button>
+        </div>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal" id="branch-dialog" aria-labelledby="branch-dialog-title">
+    <form class="modal-shell" id="branch-selection-form">
+      <header class="modal-header"><div><span class="modal-step">WATCH BRANCHES</span><h2 id="branch-dialog-title">选择要关注的分支</h2><p id="branch-dialog-subtitle">关联后可以勾选分支，或一键全选。</p></div><button class="icon-button modal-close" id="branch-dialog-close" type="button" data-close-dialog="branch-dialog" aria-label="关闭分支选择"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="branch-picker-search">
+        <label class="search-field"><svg aria-hidden="true"><use href="#icon-search"></use></svg><span class="sr-only">搜索分支</span><input id="branch-search" type="search" autocomplete="off" spellcheck="false" placeholder="搜索分支名称" aria-controls="branch-pick-list"></label>
+        <small>为保证读取速度，最多展示远程最近返回的 200 个分支。</small>
+      </div>
+      <div class="branch-picker-toolbar">
+        <button class="button button-quiet" id="select-all-branches" type="button">全选</button>
+        <span id="branch-pick-count" role="status" aria-live="polite" aria-atomic="true">尚未选择分支</span>
+      </div>
+      <section class="watch-progress" id="watch-progress" aria-labelledby="watch-progress-title" hidden>
+        <div class="watch-progress-heading">
+          <span class="watch-progress-spinner" aria-hidden="true"></span>
+          <div><strong id="watch-progress-title">正在准备关注任务</strong><p id="watch-progress-detail">即将读取仓库并获取所选分支的最新引用。</p></div>
+          <time id="watch-progress-elapsed" aria-hidden="true">0 秒</time>
+        </div>
+        <div class="watch-progress-track" id="watch-progress-track" role="progressbar" aria-label="关注分支进度" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+        <ol class="watch-progress-steps" aria-label="任务阶段">
+          <li data-watch-phase="inspect"><i aria-hidden="true"></i><span>读取仓库</span></li>
+          <li data-watch-phase="fetch"><i aria-hidden="true"></i><span>获取引用</span></li>
+          <li data-watch-phase="resolve"><i aria-hidden="true"></i><span>解析分支</span></li>
+          <li data-watch-phase="save"><i aria-hidden="true"></i><span>保存基线</span></li>
+        </ol>
+        <p class="watch-progress-selection" id="watch-progress-selection">正在处理所选分支</p>
+      </section>
+      <span class="sr-only" id="watch-progress-announcement" role="status" aria-live="polite" aria-atomic="true"></span>
+      <div id="branch-pick-list" class="branch-pick-list"></div>
+      <div class="selection-note"><svg aria-hidden="true"><use href="#icon-check"></use></svg><p><strong>首次只建立 baseline</strong><span>历史提交不会被当成新消息，也不会自动发布到飞书。</span></p></div>
+      <footer class="modal-footer"><span id="branch-footer-copy">只会观察本机已有的 checkout</span><div><button class="button button-quiet" id="branch-dismiss-button" type="button">取消</button><button class="button button-primary" id="confirm-watch-button" type="submit" disabled><svg aria-hidden="true"><use href="#icon-plus"></use></svg><span id="confirm-watch-label">关注所选分支</span></button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal" id="check-dialog" aria-labelledby="check-dialog-title">
+    <form class="modal-shell compact-shell" id="check-form">
+      <header class="modal-header"><div><span class="modal-step">ADVANCED CHECK</span><h2 id="check-dialog-title">高级检查</h2><p>普通“立即检查”使用本地规则；这里只开启额外处理。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="check-dialog" aria-label="关闭检查选项"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="option-list">
+        <label class="option-row"><span><strong>使用 Codex 深度总结</strong><small>会将过滤后的变更内容交给当前模型服务</small></span><input type="checkbox" id="check-codex"><i aria-hidden="true"></i></label>
+        <label class="option-row"><span><strong>检查后发布到飞书</strong><small>这是外部写入；未关联文档时不可用</small></span><input type="checkbox" id="check-publish"><i aria-hidden="true"></i></label>
+      </div>
+      <footer class="modal-footer"><span>始终会安全获取最新远程引用</span><div><button class="button button-quiet" type="button" data-close-dialog="check-dialog">取消</button><button class="button button-primary" type="submit">开始高级检查</button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal" id="publish-dialog" aria-labelledby="publish-dialog-title">
+    <form class="modal-shell compact-shell" id="publish-form">
+      <header class="modal-header"><div><span class="modal-step">EXTERNAL WRITE</span><h2 id="publish-dialog-title">发布待处理事件</h2><p>Branch Radar 会先按稳定事件标记对账，再向已关联的飞书项目文档追加内容。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="publish-dialog" aria-label="关闭发布确认"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="publish-confirmation"><svg aria-hidden="true"><use href="#icon-doc"></use></svg><div><strong id="publish-count-copy">准备检查发布队列</strong><p>目标：已关联的飞书项目文档。结果未知时不会显示为成功。</p></div></div>
+      <footer class="modal-footer"><span>这是外部写入操作</span><div><button class="button button-quiet" type="button" data-close-dialog="publish-dialog">取消</button><button class="button button-primary" type="submit">确认发布</button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal detail-modal" id="event-dialog" aria-labelledby="event-dialog-title">
+    <div class="modal-shell detail-shell">
+      <header class="modal-header"><div><span class="modal-step" id="event-dialog-meta">CHANGE EVENT</span><h2 id="event-dialog-title">事件详情</h2><p id="event-dialog-subtitle"></p></div><button class="icon-button modal-close" type="button" data-close-dialog="event-dialog" aria-label="关闭事件详情"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <p class="sr-only" id="event-detail-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div id="event-detail" class="event-detail" aria-busy="true"></div>
+    </div>
+  </dialog>
+
+  <dialog class="modal action-modal" id="create-lark-dialog" aria-labelledby="create-lark-title">
+    <form class="modal-shell compact-shell" id="create-lark-form">
+      <header class="modal-header"><div><span class="modal-step">EXTERNAL WRITE</span><h2 id="create-lark-title">新建飞书项目文档</h2><p>将使用当前 lark-cli 用户身份创建文档，并把地址保存到 Branch Radar。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="create-lark-dialog" aria-label="取消创建飞书文档"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <label class="stacked-field" for="lark-title"><span>文档标题</span><input id="lark-title" value="Branch Radar · 项目分支动态" required></label>
+      <footer class="modal-footer"><span>点击创建会立即写入飞书云空间</span><div><button class="button button-quiet" type="button" data-close-dialog="create-lark-dialog">取消</button><button class="button button-primary" type="submit">确认创建</button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal" id="repository-profile-dialog" aria-labelledby="repository-profile-title">
+    <form class="modal-shell compact-shell" id="repository-profile-form">
+      <header class="modal-header"><div><span class="modal-step">REPOSITORY PROFILE</span><h2 id="repository-profile-title">仓库显示资料</h2><p>设置仅用于 Branch Radar 的展示和整理，不会修改 Git 仓库。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="repository-profile-dialog" aria-label="关闭仓库资料编辑"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="repository-profile-fields">
+        <div class="repository-original-name"><span>原项目名</span><strong id="repository-profile-original-name">—</strong></div>
+        <label class="stacked-field" for="repository-profile-alias"><span>仓库别名</span><input id="repository-profile-alias" maxlength="80" autocomplete="off" placeholder="例如：实验室后端"></label>
+        <label class="stacked-field" for="repository-profile-tags"><span>分组标签</span><input id="repository-profile-tags" maxlength="199" autocomplete="off" placeholder="例如：后端、核心服务" aria-describedby="repository-profile-tag-help repository-profile-error"></label>
+        <div class="repository-tag-suggestions" id="repository-tag-suggestions" hidden>
+          <div class="repository-tag-suggestions-header"><strong>已有标签</strong><span>点击即可复用</span></div>
+          <div class="repository-tag-options" id="repository-tag-options" role="group" aria-label="选择已有标签"></div>
+        </div>
+        <p class="field-help" id="repository-profile-tag-help">可选择已有标签，也可以直接输入新标签；使用逗号分隔，最多 8 个。</p>
+        <p class="field-error" id="repository-profile-error" role="alert"></p>
+      </div>
+      <footer class="modal-footer"><span>可随时清空并恢复原始显示</span><div><button class="button button-quiet" type="button" data-close-dialog="repository-profile-dialog">取消</button><button class="button button-primary" id="repository-profile-save" type="submit">保存资料</button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal action-modal unwatch-modal" id="unwatch-dialog" aria-labelledby="unwatch-dialog-title" aria-describedby="unwatch-dialog-description unwatch-error">
+    <form class="modal-shell compact-shell" id="unwatch-form">
+      <header class="modal-header"><div><h2 id="unwatch-dialog-title">停止关注这个分支？</h2><p id="unwatch-dialog-description">停止后不再检查；历史事件与游标保留，本地 Git 不受影响。</p></div><button class="icon-button modal-close" type="button" data-close-dialog="unwatch-dialog" aria-label="关闭停止关注确认"><svg aria-hidden="true"><use href="#icon-close"></use></svg></button></header>
+      <div class="unwatch-confirmation"><span class="unwatch-confirmation-icon"><svg aria-hidden="true"><use href="#icon-branch"></use></svg></span><div><strong id="unwatch-branch-label">所选分支</strong><p id="unwatch-repository-label">当前仓库</p></div></div>
+      <p class="field-error unwatch-error" id="unwatch-error" role="alert"></p>
+      <footer class="modal-footer"><span>以后重新关注即可恢复检查</span><div><button class="button button-quiet" id="cancel-unwatch-button" type="button" data-close-dialog="unwatch-dialog">保留关注</button><button class="button button-danger" id="confirm-unwatch-button" type="submit">停止关注</button></div></footer>
+    </form>
+  </dialog>
+</body>
+</html>

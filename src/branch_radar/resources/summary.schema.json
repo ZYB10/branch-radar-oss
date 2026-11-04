@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {"type": "string"},
+    "overview": {"type": "string"},
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["feature", "fix", "refactor", "test", "docs", "api", "database", "config", "dependency", "deployment", "other"]
+      }
+    },
+    "highlights": {"type": "array", "items": {"type": "string"}},
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {"type": "string", "enum": ["low", "medium", "high"]},
+          "area": {"type": "string"},
+          "reason": {"type": "string"}
+        },
+        "required": ["level", "area", "reason"],
+        "additionalProperties": false
+      }
+    },
+    "verification": {"type": "array", "items": {"type": "string"}},
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "impact": {"type": "string", "enum": ["none", "possible", "required", "unknown"]},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["impact", "notes"],
+      "additionalProperties": false
+    },
+    "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "why": {"type": "string"}
+        },
+        "required": ["path", "why"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["title", "overview", "categories", "highlights", "risks", "verification", "deployment", "confidence", "evidence"],
+  "additionalProperties": false
+}

@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "branch-radar"
+version = "0.3.0"
+description = "A local-first Git branch monitor with Codex summaries and Lark publishing."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Branch Radar contributors" }]
+keywords = ["git", "gitlab", "codex", "lark", "feishu", "release-notes"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Version Control :: Git",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "build==1.3.0",
+  "mypy==1.17.1",
+  "ruff==0.16.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/ZYB10/branch-radar-oss"
+Repository = "https://github.com/ZYB10/branch-radar-oss.git"
+Issues = "https://github.com/ZYB10/branch-radar-oss/issues"
+
+[project.scripts]
+branch-radar = "branch_radar.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+branch_radar = ["resources/*.json", "resources/web/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "SIM", "UP", "RUF"]
+ignore = [
+  # Console strings are catalog keys for the English CLI translation, so their
+  # printf placeholders are part of the contract, not a style choice.
+  "UP031",
+  # The source language is Chinese; its punctuation is not an ambiguous
+  # substitute for the ASCII forms.
+  "RUF001",
+  "RUF002",
+  "RUF003",
+  # These modules swallow specific exceptions on purpose and say why in a
+  # comment on the handler. contextlib.suppress would leave that reasoning
+  # with nothing to attach to.
+  "SIM105",
+  # Combining context managers reads worse than nesting them once the lines
+  # are as long as the ones here.
+  "SIM117",
+  # Nested conditions here separate distinct reasons for the same outcome.
+  "SIM102",
+]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src"]
+strict = true
+pretty = true
+show_error_codes = true
+warn_unreachable = true
